@@ -55,10 +55,10 @@ bool ofGetModifierPressed(ofxModifierKey mod) {
 
 	if ((OF_MODIFIER_KEY_CTRL & mod) == OF_MODIFIER_KEY_CTRL)
 		t += NSControlKeyMask;
-	
+
 	if ((OF_MODIFIER_KEY_ALT & mod) == OF_MODIFIER_KEY_ALT)
 		t += NSAlternateKeyMask;
-	
+
 	if ((OF_MODIFIER_KEY_SHIFT & mod) == OF_MODIFIER_KEY_SHIFT)
 		t += NSShiftKeyMask;
 
