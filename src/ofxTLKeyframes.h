@@ -191,4 +191,9 @@ class ofxTLKeyframes : public ofxTLTrack
 	bool createNewOnMouseup;
 
     float constrainVerticalDrag;
+
+    // grid
+    bool bShowGrid;
+    unsigned int gridSections;
+
 };

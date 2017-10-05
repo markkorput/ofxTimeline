@@ -48,7 +48,9 @@ ofxTLKeyframes::ofxTLKeyframes()
 	shouldRecomputePreviews(false),
 	createNewOnMouseup(false),
 	useBinarySave(false),
-	valueRange(ofRange(0,1.))
+	valueRange(ofRange(0,1.)),
+	bShowGrid(true),
+	gridSections(10)
 {
 	xmlFileName = "_keyframes.xml";
 }
@@ -112,6 +114,21 @@ void ofxTLKeyframes::draw(){
 	float currentPercent = sampleAtTime(currentTrackTime());
 	ofFill();
 	ofRect(bounds.x, bounds.getMaxY(), bounds.width, -bounds.height*currentPercent);
+
+	//***** DRAW VALUE GRID (horizontal line)
+	if(bDrawGrid){
+		float delta = valueRange.span() / 2.0f;
+
+		ofSetColor(ofColor(255,0,0));
+		float x1 = bounds.getLeft();
+		float x2 = bounds.getRight();
+
+		for(int i=0; i<(gridSections-1); i++){
+			float val = valueRange.min + i * delta;
+			float y = this->valueToScreenY(val);
+			ofLine(x1, y, x2, y);
+		}
+	}
 
 	//***** DRAW KEYFRAME LINES
 	ofSetColor(timeline->getColors().keyColor);
