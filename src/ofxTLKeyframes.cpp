@@ -116,15 +116,15 @@ void ofxTLKeyframes::draw(){
 	ofRect(bounds.x, bounds.getMaxY(), bounds.width, -bounds.height*currentPercent);
 
 	//***** DRAW VALUE GRID (horizontal line)
-	if(bDrawGrid){
-		float delta = valueRange.span() / 2.0f;
+	if(bShowGrid){
+		float delta = 1.0f / gridSections; //valueRange.span() / gridSections;
 
-		ofSetColor(ofColor(255,0,0));
+		ofSetColor(ofColor(255,100));
 		float x1 = bounds.getLeft();
 		float x2 = bounds.getRight();
 
-		for(int i=0; i<(gridSections-1); i++){
-			float val = valueRange.min + i * delta;
+		for(int i=1; i<gridSections; i++){
+			float val = /*valueRange.min +*/ i * delta;
 			float y = this->valueToScreenY(val);
 			ofLine(x1, y, x2, y);
 		}
