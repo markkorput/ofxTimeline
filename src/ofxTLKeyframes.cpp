@@ -50,7 +50,8 @@ ofxTLKeyframes::ofxTLKeyframes()
 	useBinarySave(false),
 	valueRange(ofRange(0,1.)),
 	bShowGrid(true),
-	gridSections(10)
+	gridSections(10),
+	bSnapToGrid(true)
 {
 	xmlFileName = "_keyframes.xml";
 }
@@ -478,7 +479,6 @@ void ofxTLKeyframes::mouseMoved(ofMouseEventArgs& args, long millis){
 
 void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
 
-
     if ( ofGetModifierAltPressed() && constrainVerticalDrag != NULL ) args.y = constrainVerticalDrag;
 
 	if(keysAreStretchable){
@@ -501,7 +501,23 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
             ofVec2f newScreenPosition;
             setKeyframeTime(selectedKeyframes[k], ofClamp(millis - selectedKeyframes[k]->grabTimeOffset,
 														  screenXToMillis(bounds.getMinX()), screenXToMillis(bounds.getMaxX())));
+
             selectedKeyframes[k]->value = screenYToValue(args.y - selectedKeyframes[k]->grabValueOffset);
+
+            if(bSnapToGrid){
+                float delta = 1.0f / gridSections;
+                selectedKeyframes[k]->value = std::round(selectedKeyframes[k]->value / delta) * delta;
+                // float closestDist = 2.0f;
+                // float closestVal;
+                //
+                // for(int i=0; i<=gridSections; i++){
+                //     float val = /*valueRange.min +*/ i * delta;
+                //     float dist = std::abs(selectedKeyframes[k]->value, val);
+                //     if()
+                //     ofLine(x1, y, x2, y);
+                // }
+            }
+
             selectedKeyframes[k]->screenPosition = screenPositionForKeyframe(selectedKeyframes[k]);
         }
         if(selectedKeyframe != NULL && timeline->getMovePlayheadOnDrag()){

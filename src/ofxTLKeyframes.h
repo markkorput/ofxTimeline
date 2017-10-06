@@ -195,5 +195,5 @@ class ofxTLKeyframes : public ofxTLTrack
     // grid
     bool bShowGrid;
     unsigned int gridSections;
-
+    bool bSnapToGrid;
 };
