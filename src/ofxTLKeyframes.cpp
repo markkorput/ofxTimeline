@@ -120,7 +120,7 @@ void ofxTLKeyframes::draw(){
 	if(bShowGrid){
 		float delta = 1.0f / gridSections; //valueRange.span() / gridSections;
 
-		ofSetColor(ofColor(255,100));
+		ofSetColor(ofColor(255, bSnapToGrid ? 100 : 50));
 		float x1 = bounds.getLeft();
 		float x2 = bounds.getRight();
 
@@ -814,6 +814,9 @@ void ofxTLKeyframes::keyPressed(ofKeyEventArgs& args){
     {
         addKeyframe( getValue() );
     }
+
+	if( args.key == 'S')
+		bSnapToGrid = !bSnapToGrid;
 }
 
 void ofxTLKeyframes::nudgeBy(ofVec2f nudgePercent){
