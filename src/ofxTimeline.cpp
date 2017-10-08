@@ -131,6 +131,8 @@ void ofxTimeline::setup(){
 	tabs->setup();
 	tabs->setDrawRect(ofRectangle(offset.x, offset.y, width, TAB_HEIGHT));
 
+	this->loadSettings();
+
 	if(inoutTrack != NULL){
 		delete inoutTrack;
 	}
@@ -214,6 +216,8 @@ void ofxTimeline::setName(string newName){
 }
 
 void ofxTimeline::setupStandardElements(){
+
+	xmlFileName = ofToDataPath(workingFolder + name + "_timeline.xml");
 
 //	cout << "*****TL setting up standard path " << ofToDataPath(workingFolder + name + "_inout.xml") << endl;
 
@@ -502,10 +506,34 @@ bool ofxTimeline::hasUnsavedChanges(){
 	return unsavedChanges;
 }
 
+bool ofxTimeline::loadSettings() {
+	ofxXmlSettings settings;
+	if(!settings.loadFile(xmlFileName)){
+		ofLog(OF_LOG_VERBOSE, "ofxTimeline -- couldn't load settings file " + xmlFileName);
+		return false;
+	}
+
+	settings.pushTag("timeline");
+	this->setDurationInSeconds(settings.getValue("duration", 10.0f));
+	settings.popTag();
+	return true;
+}
+
+void ofxTimeline::saveSettings(){
+	ofxXmlSettings savedSettings;
+	savedSettings.addTag("timeline");
+	savedSettings.pushTag("timeline");
+	savedSettings.addValue("duration", this->durationInSeconds);
+	savedSettings.popTag();//timeline
+	savedSettings.saveFile(xmlFileName);
+}
+
 void ofxTimeline::save(){
 	for(int i = 0; i < pages.size(); i++){
         pages[i]->save();
     }
+
+	this->saveSettings();
 	zoomer->save();
 	inoutTrack->save();
 	unsavedChanges = false;
@@ -644,7 +672,7 @@ void ofxTimeline::setCurrentTimeSeconds(float time){
         playbackStartTime = timer.getAppTimeSeconds() - currentTime;
         playbackStartFrame = ofGetFrameNum() - timecode.frameForSeconds(currentTime);
     }
- 
+
 }
 
 void ofxTimeline::setCurrentTimeMillis(unsigned long long millis){
@@ -913,7 +941,8 @@ void ofxTimeline::setDurationInSeconds(float seconds){
 		setOutPointAtSeconds(outTimeSeconds);
 	}
 
-	zoomer->setViewRange(zoomer->getSelectedRange());
+	if(zoomer)
+		zoomer->setViewRange(zoomer->getSelectedRange());
 }
 
 void ofxTimeline::setDurationInMillis(unsigned long long millis){
