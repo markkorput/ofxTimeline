@@ -116,8 +116,9 @@ void ofxTLKeyframes::draw(){
 	ofFill();
 	ofRect(bounds.x, bounds.getMaxY(), bounds.width, -bounds.height*currentPercent);
 
-	//***** DRAW VALUE GRID (horizontal line)
+	//***** DRAW VALUE GRID
 	if(bShowGrid){
+		// horizontal line
 		float delta = 1.0f / gridSections; //valueRange.span() / gridSections;
 
 		ofSetColor(ofColor(255, bSnapToGrid ? 100 : 50));
@@ -128,6 +129,15 @@ void ofxTLKeyframes::draw(){
 			float val = /*valueRange.min +*/ i * delta;
 			float y = this->valueToScreenY(val);
 			ofLine(x1, y, x2, y);
+		}
+
+		float screenSpacing = std::abs(this->valueToScreenY(0.0) - this->valueToScreenY(delta));
+
+		for(int i=1; true; i++){
+			float x = i*screenSpacing;
+			if(x >= bounds.getRight())
+				break;
+			ofLine(x, bounds.getTop(), x, bounds.getBottom());
 		}
 	}
 
