@@ -559,7 +559,8 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
             }
 
             if(bSnapToGridX){
-
+              // float delta = 1.0f / gridStepX;
+              selectedKeyframes[k]->time = (long)(std::round((double)selectedKeyframes[k]->time / 1000.0f / zoomGridStepX) * zoomGridStepX * 1000.0f);
             }
 
             selectedKeyframes[k]->screenPosition = screenPositionForKeyframe(selectedKeyframes[k]);
@@ -1046,7 +1047,7 @@ void ofxTLKeyframes::updateGridX(){
   // unsigned long zoomDur = (unsigned long)((zoomT2 - zoomT1) * 1000.0f);
   // float scrWidth = bounds.getWidth();
 
-  unsigned int minScreenDelta = 10.0f; // pixels
+  unsigned int minScreenDelta = 5.0f; // pixels
 
   zoomGridStepX = gridStepX; // ms
 
