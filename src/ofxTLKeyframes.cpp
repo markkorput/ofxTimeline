@@ -529,6 +529,13 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
     args.y = constrainVerticalDrag;
   }
 
+  // snap by correcting the millis to a rounded amount
+  if(bSnapToGridX && selectedKeyframe){
+    millis -= selectedKeyframe->grabTimeOffset;
+    millis = std::round((double)millis/zoomGridStepX/1000.0f)*zoomGridStepX*1000.0f;
+    millis += selectedKeyframe->grabTimeOffset;
+  }
+
   if(keysAreStretchable){
     //cast the stretch anchor to long so that it can be signed
     float stretchRatio = 1.0*(millis-long(stretchAnchor)) / (1.0*stretchSelectPoint-stretchAnchor);
@@ -545,6 +552,7 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
 
     if(keysAreDraggable && selectedKeyframes.size() != 0){
         ofVec2f screenpoint(args.x,args.y);
+
         for(int k = 0; k < selectedKeyframes.size(); k++){
             ofVec2f newScreenPosition;
             setKeyframeTime(selectedKeyframes[k], ofClamp(millis - selectedKeyframes[k]->grabTimeOffset,
@@ -556,11 +564,6 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
             if(bSnapToGridY){
               float delta = 1.0f / gridSectionsY;
               selectedKeyframes[k]->value = std::round(selectedKeyframes[k]->value / delta) * delta;
-            }
-
-            if(bSnapToGridX){
-              // float delta = 1.0f / gridStepX;
-              selectedKeyframes[k]->time = (long)(std::round((double)selectedKeyframes[k]->time / 1000.0f / zoomGridStepX) * zoomGridStepX * 1000.0f);
             }
 
             selectedKeyframes[k]->screenPosition = screenPositionForKeyframe(selectedKeyframes[k]);
