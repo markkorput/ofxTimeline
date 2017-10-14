@@ -529,11 +529,27 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
     args.y = constrainVerticalDrag;
   }
 
-  // snap by correcting the millis to a rounded amount
-  if(bSnapToGridX && selectedKeyframe){
-    millis -= selectedKeyframe->grabTimeOffset;
-    millis = std::round((double)millis/zoomGridStepX/1000.0f)*zoomGridStepX*1000.0f;
-    millis += selectedKeyframe->grabTimeOffset;
+  // snapping
+  if(selectedKeyframe){
+    // snap by correcting the args.y to a rounded amount
+    if(bSnapToGridY){
+      args.y -= selectedKeyframe->grabValueOffset;
+      float val = screenYToValue(args.y);
+      float step = 1.0f/gridSectionsY;
+      val = std::round(val / step) * step;
+      args.y = valueToScreenY(val) + selectedKeyframe->grabValueOffset;
+      // float delta = bounds.getHeight() / gridSectionsY;
+      // args.y = std::round(args.y/delta) * delta;
+      // args.y += selectedKeyframe->grabValueOffset;
+      // selectedKeyframes[k]->value = std::round(selectedKeyframes[k]->value / delta) * delta;
+    }
+
+    // snap by correcting the millis to a rounded amount
+    if(bSnapToGridX){
+      millis -= selectedKeyframe->grabTimeOffset;
+      millis = std::round((double)millis/zoomGridStepX/1000.0f)*zoomGridStepX*1000.0f;
+      millis += selectedKeyframe->grabTimeOffset;
+    }
   }
 
   if(keysAreStretchable){
@@ -559,12 +575,6 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
                               screenXToMillis(bounds.getMinX()), screenXToMillis(bounds.getMaxX())));
 
             selectedKeyframes[k]->value = screenYToValue(args.y - selectedKeyframes[k]->grabValueOffset);
-
-
-            if(bSnapToGridY){
-              float delta = 1.0f / gridSectionsY;
-              selectedKeyframes[k]->value = std::round(selectedKeyframes[k]->value / delta) * delta;
-            }
 
             selectedKeyframes[k]->screenPosition = screenPositionForKeyframe(selectedKeyframes[k]);
         }
