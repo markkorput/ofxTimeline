@@ -121,10 +121,18 @@ class ofxTLKeyframes : public ofxTLTrack
     void loadFromBinaryFile();
     bool useBinarySave;
 
-    void setGridSections(unsigned int amount){ this->gridSections = amount; }
-    unsigned int getGridSections() const { return this->gridSections; }
+    void setGridSectionsY(unsigned int amount){ this->gridSectionsY = amount; }
+    unsigned int getGridSectionsY() const { return this->gridSectionsY; }
+
+    void setGridStepX(float seconds){ this->gridStepX = seconds; this->updateGridX(); }
+    float getGridStepX() const { return this->gridStepX; }
+
+    virtual void setZoomBounds(ofRange zoomBoundsPercent);
 
   protected:
+
+    void updateGridX();
+
     virtual ofxTLKeyframe* newKeyframe();
     vector<ofxTLKeyframe*> keyframes;
 
@@ -197,8 +205,9 @@ class ofxTLKeyframes : public ofxTLTrack
 
     // grid
     bool bShowGrid;
-    unsigned int gridSections;
-    bool bSnapToGrid;
+    unsigned int gridSectionsY;
+    float gridStepX, zoomGridStepX; // seconds
+    bool bSnapToGridY, bSnapToGridX;
 
     void pasteAt(string pasteboard, long pasteTime);
 };

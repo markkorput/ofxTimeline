@@ -149,7 +149,7 @@ class ofxTLTrack
 	virtual void zoomDragged(ofxTLZoomEventArgs& args);
 	virtual void zoomEnded(ofxTLZoomEventArgs& args);
     //managed by the zoom call backs and initialized by the Page upon creation
-	void setZoomBounds(ofRange zoomBoundsPercent);
+	virtual void setZoomBounds(ofRange zoomBoundsPercent);
 
 	virtual void save(){};
 	virtual void load(){};
