@@ -199,4 +199,6 @@ class ofxTLKeyframes : public ofxTLTrack
     bool bShowGrid;
     unsigned int gridSections;
     bool bSnapToGrid;
+
+    void pasteAt(string pasteboard, long pasteTime);
 };

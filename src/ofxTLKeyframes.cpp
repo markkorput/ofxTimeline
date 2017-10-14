@@ -410,27 +410,50 @@ bool ofxTLKeyframes::mousePressed(ofMouseEventArgs& args, long millis){
 
         //if we didn't just deselect everything and clicked in an empty space add a new keyframe there
         if(selectedKeyframe == NULL && !didJustDeselect){
-			createNewOnMouseup = args.button == 0 && !ofGetModifierControlPressed();
+					createNewOnMouseup = args.button == 0 && !ofGetModifierControlPressed();
         }
     }
 
 	if(selectedKeyframe != NULL){
-         //add the keyframe to the selection, whether it was just generated or not
-    	if(!isKeyframeSelected(selectedKeyframe)){
+		//add the keyframe to the selection, whether it was just generated or not
+		if(!isKeyframeSelected(selectedKeyframe)){
 			selectedKeyframes.push_back(selectedKeyframe);
 			updateKeyframeSort();
-//			selectKeyframe(selectedKeyframe);
-        }
-        //unselect it if it's selected and we clicked the key with shift pressed
-        else if(ofGetModifierSelection()){
-        	deselectKeyframe(selectedKeyframe);
-			selectedKeyframe = NULL;
-        }
+			//			selectKeyframe(selectedKeyframe);
+		}
+		else {
+			// create duplication of all selected items when shift and alt are pressed
+			if(ofGetModifierAltPressed() && ofGetModifierShiftPressed()){
+				// this basically performs an instant copy/paste
+				long pasteTime = selectedKeyframe->time;
+
+				for(auto keyfr : selectedKeyframes){
+					if(keyfr->time < pasteTime) pasteTime = keyfr->time;
+				}
+
+				auto originalSelectedKeyframe = selectedKeyframe;
+
+				this->pasteAt(this->copyRequest(), pasteTime);
+
+				deselectKeyframe(originalSelectedKeyframe);
+
+				for(auto keyfr : selectedKeyframes){
+					if(keyfr->time == originalSelectedKeyframe->time && keyfr->value == originalSelectedKeyframe->value)
+						selectedKeyframe = keyfr;
+				}
+
+				keysAreDraggable = true;
+			//unselect it if it's selected and we clicked the key with shift pressed
+			} else if(ofGetModifierSelection()){
+				deselectKeyframe(selectedKeyframe);
+				selectedKeyframe = NULL;
+			}
+		}
 	}
 
     //if we have any keyframes selected update the grab offsets and check for showing the modal window
 	if(selectedKeyframes.size() != 0){
-        updateDragOffsets(screenpoint, millis);
+    updateDragOffsets(screenpoint, millis);
 		if(selectedKeyframe != NULL){
 
 			if(args.button == 0 && !ofGetModifierSelection() && !ofGetModifierControlPressed()){
@@ -479,7 +502,9 @@ void ofxTLKeyframes::mouseMoved(ofMouseEventArgs& args, long millis){
 
 void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
 
-    if ( ofGetModifierAltPressed() && constrainVerticalDrag != NULL ) args.y = constrainVerticalDrag;
+	if ( ofGetModifierAltPressed() && constrainVerticalDrag != NULL ) {
+		args.y = constrainVerticalDrag;
+	}
 
 	if(keysAreStretchable){
 		//cast the stretch anchor to long so that it can be signed
@@ -618,6 +643,10 @@ string ofxTLKeyframes::cutRequest(){
 }
 
 void ofxTLKeyframes::pasteSent(string pasteboard){
+	pasteAt(pasteboard, timeline->getCurrentTimeMillis());
+}
+
+void ofxTLKeyframes::pasteAt(string pasteboard, long pasteTime){
 	vector<ofxTLKeyframe*> keyContainer;
 	ofxXmlSettings pastedKeys;
 
@@ -630,7 +659,7 @@ void ofxTLKeyframes::pasteSent(string pasteboard){
 			//for(int i = 0; i < keyContainer.size(); i++){
 			for(int i = keyContainer.size()-1; i >= 0; i--){
 				keyContainer[i]->time -= keyContainer[0]->time;
-				keyContainer[i]->time += timeline->getCurrentTimeMillis();
+				keyContainer[i]->time += pasteTime;
 				if(keyContainer[i]->time <= timeline->getDurationInMilliseconds()){
 					selectedKeyframes.push_back(keyContainer[i]);
 					keyframes.push_back(keyContainer[i]);
