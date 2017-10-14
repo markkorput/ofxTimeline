@@ -57,6 +57,7 @@ ofxTLKeyframes::ofxTLKeyframes()
   zoomGridStepX(12.8f)
 {
   xmlFileName = "_keyframes.xml";
+  setGridWavelengthX(60.0f); // seconds
 }
 
 ofxTLKeyframes::~ofxTLKeyframes(){
@@ -141,9 +142,13 @@ void ofxTLKeyframes::draw(){
     // ofLog() << "draw zoomGridStepX: " << zoomGridStepX;
     // calculate x-position, draw vertical lign and step to next line
     while(true){
-      float x = screenXForTime(step*zoomGridStepX);
+      float t = step*zoomGridStepX;
+      float x = screenXForTime(t);
+
       if(x >= bounds.getRight())
         break;
+
+      ofSetColor(ofColor(255, (bSnapToGridX ? 125 : 75) + 75 * std::cos(t*this->gridWavelengthFactorX)));
       ofLine(x, bounds.getTop(), x, bounds.getBottom());
       step++;
     }

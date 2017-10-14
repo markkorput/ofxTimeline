@@ -129,6 +129,8 @@ class ofxTLKeyframes : public ofxTLTrack
 
     virtual void setZoomBounds(ofRange zoomBoundsPercent);
 
+    void setGridWavelengthX(float len){ this->gridWavelengthFactorX = 2 * M_PI / len; }
+
   protected:
 
     void updateGridX();
@@ -208,6 +210,7 @@ class ofxTLKeyframes : public ofxTLTrack
     unsigned int gridSectionsY;
     float gridStepX, zoomGridStepX; // seconds
     bool bSnapToGridY, bSnapToGridX;
+    float gridWavelengthFactorX;
 
     void pasteAt(string pasteboard, long pasteTime);
 };
