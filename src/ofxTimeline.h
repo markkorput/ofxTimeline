@@ -603,6 +603,9 @@ class ofxTimeline : ofThread {
 	bool isFrameBased;
 	float durationInSeconds;
 
+  bool useWindowClipboard;
+	string clipboardDelimiter;
+
 private:
   string xmlFileName;
   bool loadSettings();

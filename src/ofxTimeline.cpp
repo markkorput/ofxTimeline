@@ -93,7 +93,9 @@ ofxTimeline::ofxTimeline()
 	//TODO: should be able to use bitmap font if need be
 	fontPath("GUI/NewMedia Fett.ttf"),
 	fontSize(9),
-	footersHidden(false)
+	footersHidden(false),
+	useWindowClipboard(true),
+	clipboardDelimiter("////")
 {
 }
 
@@ -1333,6 +1335,8 @@ void ofxTimeline::keyPressed(ofKeyEventArgs& args){
 			currentPage->copyRequest(copyattempt);
 			if(copyattempt.size() > 0){
 				pasteboard = copyattempt;
+				if(useWindowClipboard)
+					ofGetWindowPtr()->setClipboardString(ofJoinString(pasteboard, clipboardDelimiter));
 			}
 		}
 		else if(args.key == 'x' || args.key == 'x'-96){ //cut
@@ -1340,9 +1344,15 @@ void ofxTimeline::keyPressed(ofKeyEventArgs& args){
 			currentPage->cutRequest(copyattempt);
 			if(copyattempt.size() > 0){
 				pasteboard = copyattempt;
+				if(useWindowClipboard)
+					ofGetWindowPtr()->setClipboardString(ofJoinString(pasteboard, clipboardDelimiter));
 			}
 		}
 		else if(args.key == 'v' || args.key == 'v'-96){ //paste
+			if(useWindowClipboard){
+				pasteboard = ofSplitString(ofGetWindowPtr()->getClipboardString(), clipboardDelimiter);
+			}
+
 			if (pasteboard.size() > 0) {
 				currentPage->pasteSent(pasteboard);
 			}
