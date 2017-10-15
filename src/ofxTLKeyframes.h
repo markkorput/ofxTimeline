@@ -129,6 +129,8 @@ class ofxTLKeyframes : public ofxTLTrack
 
     virtual void setZoomBounds(ofRange zoomBoundsPercent);
 
+    void setShowGridX(bool show){ bShowGridX = show; if(show) this->updateGridX(); }
+    void setSnapToGridX(bool snap){ bSnapToGridX = snap; if(snap) this->updateGridX(); }
     void setGridWavelengthX(float len){ this->gridWavelengthFactorX = 2 * M_PI / len; }
 
   protected:
@@ -206,7 +208,7 @@ class ofxTLKeyframes : public ofxTLTrack
     float constrainVerticalDrag;
 
     // grid
-    bool bShowGrid;
+    bool bShowGrid, bShowGridX;
     unsigned int gridSectionsY;
     float gridStepX, zoomGridStepX; // seconds
     bool bSnapToGridY, bSnapToGridX;

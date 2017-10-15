@@ -50,8 +50,9 @@ ofxTLKeyframes::ofxTLKeyframes()
   useBinarySave(false),
   valueRange(ofRange(0,1.)),
   bShowGrid(true),
+  bShowGridX(false),
   gridSectionsY(10),
-  bSnapToGridX(true),
+  bSnapToGridX(false),
   bSnapToGridY(true),
   gridStepX(0.1f),
   zoomGridStepX(12.8f)
@@ -134,7 +135,9 @@ void ofxTLKeyframes::draw(){
       float y = this->valueToScreenY(val);
       ofLine(x1, y, x2, y);
     }
+  }
 
+  if(bShowGridX){
     // this->updateGridX();
 
     // first calculate left-most step number (round up)
@@ -881,9 +884,9 @@ void ofxTLKeyframes::keyPressed(ofKeyEventArgs& args){
   }
 
   if( args.key == 'S'){
-    bool enable = !(bSnapToGridX && bSnapToGridY);
-    bSnapToGridX = enable;
-    bSnapToGridY = enable;
+    //bool enable = !(bSnapToGridX && bSnapToGridY);
+    //bSnapToGridX = enable;
+    bSnapToGridY = !bSnapToGridY; //enable;
     return;
   }
 }
@@ -1043,6 +1046,7 @@ void ofxTLKeyframes::setZoomBounds(ofRange zoomBoundsPercent){
 }
 
 void ofxTLKeyframes::updateGridX(){
+  if(!bShowGridX && !bSnapToGridX) return;
   // ofLog() << "updateGridX dur: " << timeline->getDurationInSeconds();
   float zoomT1 = timeline->getDurationInSeconds() * zoomBounds.min;
   // ofLog() << "zoomT1: " << zoomT1;
