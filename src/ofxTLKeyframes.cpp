@@ -533,14 +533,15 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
   }
 
   // snapping
-  if(selectedKeyframe){
+  auto keyfr = selectedKeyframe;
+  if(keyfr){
     // snap by correcting the args.y to a rounded amount
     if(bSnapToGridY){
-      args.y -= selectedKeyframe->grabValueOffset;
+      args.y -= keyfr->grabValueOffset;
       float val = screenYToValue(args.y);
       float step = 1.0f/gridSectionsY;
       val = std::round(val / step) * step;
-      args.y = valueToScreenY(val) + selectedKeyframe->grabValueOffset;
+      args.y = valueToScreenY(val) + keyfr->grabValueOffset;
       // float delta = bounds.getHeight() / gridSectionsY;
       // args.y = std::round(args.y/delta) * delta;
       // args.y += selectedKeyframe->grabValueOffset;
@@ -549,9 +550,9 @@ void ofxTLKeyframes::mouseDragged(ofMouseEventArgs& args, long millis){
 
     // snap by correcting the millis to a rounded amount
     if(bSnapToGridX){
-      millis -= selectedKeyframe->grabTimeOffset;
+      millis -= keyfr->grabTimeOffset;
       millis = std::round((double)millis/zoomGridStepX/1000.0f)*zoomGridStepX*1000.0f;
-      millis += selectedKeyframe->grabTimeOffset;
+      millis += keyfr->grabTimeOffset;
     }
   }
 
